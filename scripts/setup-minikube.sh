@@ -152,7 +152,11 @@ infer_minikube_settings() {
 
   # disk
   local dd=40
-  dd=$(df -h . | awk '{print $4}' | tail -1 | sed 's/[A-Za-z]//g')
+  if [[ $(uname) == 'Darwin' ]]; then
+    dd=$(df -g . | awk '{print $4}' | tail -1 | sed 's/[A-Za-z]//g')
+  else
+    dd=$(df -BG . | awk '{print $4}' | tail -1 | sed 's/[A-Za-z]//g')
+  fi
   if (($dd < 40)); then
     echo -e "${YELLOW}WARNING: Low available disk space.${NC}"
   fi
